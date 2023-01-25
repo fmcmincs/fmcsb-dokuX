@@ -1,14 +1,19 @@
-variable "region" {
-  type        = string
-  description = "Region to deploy the bucket in"
+variable "number" {
+  type = string
+  description = "111111111111"
 }
 
-variable "bucket_name" {
+variable "region" {
   type        = string
-  description = "My bucket name"
+  description = "eu-west-1"
 }
 
 variable "profile" {
   type        = string
-  description = "Provider profile"
+  description = "fmcsbtestcs"
+}
+
+variable "bucket_name" {
+  type        = string
+  description = "fairmar${var.profile}bucket${var.number}"
 }

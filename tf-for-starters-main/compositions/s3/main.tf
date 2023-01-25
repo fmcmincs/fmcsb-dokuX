@@ -1,22 +1,22 @@
+#local variables
 locals {
   vpc_count = 3
 }
 
 # ------------------- LOCAL MODULES -------------------
 # -----------------------------------------------------
-module "kms" {
+#AWS key management service
+module "kms" { #calls kms.tf
   source                  = "../../modules/kms"
   description             = "Key for S3-Bucket"
-  deletion_window_in_days = 10
+  deletion_window_in_days = 10 #days till AWS KMS deletes the KMS key
 }
 
-# refer to output -> if kms key should be placed within composition refer to -> module.kms.key_arn
-
-module "s3_bucket" {
+module "s3_bucket" { #calls s3_bucket.tf
   source                    = "../../modules/s3"
-  bucket_name               = var.bucket_name
+  bucket_name               = var.bucket_name #from /tf_variables.tf
   bucket_versioning_enabled = true
-  key_arn                   = module.kms.key_arn
+  key_arn                   = module.kms.key_arn #from kms/tf_outputs.tf ==> output value
 }
 
 
@@ -28,11 +28,11 @@ module "s3_bucket" {
 
 # https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
 module "vpc" {
-  count = local.vpc_count
+  count = local.vpc_count #from local var at top
   source = "terraform-aws-modules/vpc/aws"
 
   name = "my-vpc-count-${count.index}"
-  cidr = "10.0.0.0/16"
+  cidr = "10.0.0.0/16" #check in https://cidr.xyz/
 
   azs             = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
@@ -49,12 +49,12 @@ module "vpc" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
 resource "aws_security_group" "allow_tls" {
-  for_each = {for k in range(local.vpc_count): k=>k}
+  for_each = {for k in range(local.vpc_count): k=>k} 
   name        = "allow_tls_count_${each.value}"
   description = "Allow TLS inbound traffic"
-  vpc_id      = module.vpc[each.value].vpc_id
+  vpc_id      = module.vpc[each.value].vpc_id #output value
 
-  ingress {
+  ingress { #eingangsregeln
     description      = "TLS from VPC"
     from_port        = 443
     to_port          = 443
@@ -62,7 +62,7 @@ resource "aws_security_group" "allow_tls" {
     cidr_blocks      = ["${module.vpc[each.value].vpc_cidr_block}"]
   }
 
-  egress {
+  egress { #ousgangsregeln
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
@@ -92,7 +92,11 @@ data "aws_ami" "ubuntu" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
-#resource "aws_instance" "name" {
-  
+#resource "aws_instance" "ubuntuboi" {
+
+ ## testcode --
+ ## ami           = data.aws_ami.ubuntu.id
+ ## instance_type = "t1.micro"
+
 #}
 

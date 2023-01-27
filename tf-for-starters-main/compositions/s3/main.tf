@@ -5,6 +5,7 @@ locals {
 
 # ------------------- LOCAL MODULES -------------------
 # -----------------------------------------------------
+
 #AWS key management service
 module "kms" { #calls kms.tf
   source                  = "../../modules/kms"
@@ -20,11 +21,8 @@ module "s3_bucket" { #calls s3_bucket.tf
 }
 
 
-
-
 # ------------------- REMOTE  MODULES -------------------
 # -------------------------------------------------------
-
 
 # https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
 module "vpc" {
@@ -46,6 +44,9 @@ module "vpc" {
     Environment = "dev"
   }
 }
+
+# --------------------- RESSOURCES ----------------------
+# -------------------------------------------------------
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
 resource "aws_security_group" "allow_tls" {
@@ -92,7 +93,7 @@ data "aws_ami" "ubuntu" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
-#resource "aws_instance" "ubuntuboi" {
+#resource "aws_instance" "ubuntumuntu" {
 
  ## testcode --
  ## ami           = data.aws_ami.ubuntu.id

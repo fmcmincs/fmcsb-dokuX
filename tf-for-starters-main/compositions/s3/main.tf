@@ -3,6 +3,14 @@ locals {
   vpc_count = 3
 }
 
+# cost calculation
+# 1 region, 3 VPC, 3 SG, 18 subnets
+# 3 internet gateways
+# 3 vpn gateways
+# 9 nat gateways
+# kms 1-2$
+# s3 0$
+
 # ------------------- LOCAL MODULES -------------------
 # -----------------------------------------------------
 
@@ -36,7 +44,8 @@ module "vpc" {
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
-  enable_nat_gateway = true
+  #enable_nat_gateway = true
+  enable_nat_gateway = false
   enable_vpn_gateway = true
 
   tags = {
@@ -93,11 +102,11 @@ data "aws_ami" "ubuntu" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
-#resource "aws_instance" "ubuntumuntu" {
+resource "aws_instance" "ubuntumuntu" {
 
  ## testcode --
- ## ami           = data.aws_ami.ubuntu.id
- ## instance_type = "t1.micro"
+ ami           = data.aws_ami.ubuntu.id
+ instance_type = "t1.micro"
 
-#}
+}
 
